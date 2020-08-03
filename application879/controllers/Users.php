@@ -12,7 +12,7 @@ class Users extends CI_Controller
 		$this->load->model('users_model', 'usersModel');
 
 		// library
-		$this->load->library('layout');
+		$this->load->library('layout'); // Pour utiliser un layout personalisé
 
 		// Helpers natif
 		// Helpers perso
@@ -38,7 +38,8 @@ class Users extends CI_Controller
 		$users = $this->usersModel->read();
 		$data['users'] = $this->titreDefaut;
 
-		$this->load->view('users_home', $data);
+		// $this->load->view('users_home', $data);
+		$this->layout->view('users_home', $data); // Utilisation du layout custom
 	}
 
 	//
@@ -70,7 +71,8 @@ class Users extends CI_Controller
 			);
 		 	$r = $this->usersModel->create($data, $data_no_escaped);
 		 	if ($r === false) {
-		 		$this->load->view('users_create');
+		 		// $this->load->view('users_create');
+		 		$this->layout->view('users_create', $data); // Utilisation du layout custom
 		 	} else {
 		 		$idUser = $this->db->insert_id();
 		 		$this->session->set_tempdata('users_new', 'L\'utilisater id ' . $idUser . ' vient d\'être créé', 300);
@@ -80,7 +82,8 @@ class Users extends CI_Controller
 		}
 		else {
 			//	Le formulaire est invalide ou vide
-			$this->load->view('users_create');
+			// $this->load->view('users_create');
+			$this->layout->view('users_create', $data); // Utilisation du layout custom
 		}
 	}
 

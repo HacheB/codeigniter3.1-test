@@ -1,5 +1,5 @@
 
-<h1><?php echo $titreDefaut; ?></h1>
+<h1 class="h2"><?php echo $titreDefaut; ?></h1>
 
 <?php if($this->session->tempdata('users_new')): ?>
 	<div class="alert alert-info" role="alert">
