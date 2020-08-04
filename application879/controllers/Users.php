@@ -50,10 +50,7 @@ class Users extends CI_Controller
 		$this->load->helper('security');
 		$this->load->library('form_validation');
 
-		$this->form_validation->set_rules('firstname', '"Prénom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
-		$this->form_validation->set_rules('lastname', '"Nom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
-		$this->form_validation->set_rules('email', '"Mail"', 'trim|required|min_length[5]|max_length[124]|xss_clean|valid_email|is_unique[users.email]');
-		$this->form_validation->set_rules('phone', '"Téléphone"', 'trim|min_length[5]|max_length[20]|encode_php_tags|xss_clean');
+		$this->set_users_post_validation();
 		
 		if($this->form_validation->run()) {
 			//	Le formulaire est valide
@@ -87,10 +84,59 @@ class Users extends CI_Controller
 
 	//
 	// Editer un utilisateur
+	// reçoit l'id en parametre GET
 	//
-	public function edit()
+	public function update($id)
 	{
+		if(!is_numeric($id)) {
+			$this->session->set_tempdata('users_update--danger', 'Tentative de mise à jour erreur', 30);
+		 	redirect('users'); // On retourne à la liste des enregistrements
+			return false;
+		} else {
+			$id=intval($id);
+		}
+		$data = array(); // Datas pour la view
 
+		// Vérification si le user est dans la base de données
+		$user = $this->usersModel->read('firstname, lastname, email, phone', $id);
+		if (count($user) <= 0) {
+			// Pas de user demandé on redirige vers la création de user
+			redirect('users/create');
+			return false;
+		} else {
+			$data=array_merge($data, (array) $user[0]); // Assignation des valeurs de l'user au tableau des datas pour la view
+		}
+
+		//	Chargement de la bibliothèque
+		$this->load->helper('security');
+		$this->load->library('form_validation');
+
+		$this->set_users_post_validation($user[0]->email);
+		
+		if($this->form_validation->run()) {
+			//	Le formulaire est valide
+			$data_escaped = array(
+				'firstname' => $this->input->post('firstname'),
+				'lastname' => $this->input->post('lastname'),
+				'email' => $this->input->post('email'),
+				'phone' => $this->input->post('phone')
+			);
+			$data_no_escaped = array(
+				'date_updated' => 'NOW()'
+			);
+		 	$r = $this->usersModel->update($id, $data_escaped, $data_no_escaped);
+		 	if ($r === false) {
+		 		$this->layout->view('users_update', $data); // Utilisation du layout custom
+		 	} else {
+		 		$this->session->set_tempdata('users_update', 'L\'utilisater id ' . $id . ' vient d\'être mis à jour', 300);
+		 		// $this->get(); // On retourne à la liste des enregistrements
+		 		redirect('users'); // On retourne à la liste des enregistrements
+		 	}
+		}
+		else {
+			//	Le formulaire est invalide ou vide
+			$this->layout->view('users_update', $data); // Utilisation du layout custom
+		}
 	}
 
 	//
@@ -99,12 +145,13 @@ class Users extends CI_Controller
 	//
 	public function delete($id)
 	{
-		$id = intval($id); // force le type INT
-		if(!is_integer($id) || $id <= 0) {
+		if(!is_numeric($id)) {
 			$this->session->set_tempdata('users_delete--danger', 'Tentative de suppression erreur', 30);
 			$this->get();
 		 	// redirect('users'); // On retourne à la liste des enregistrements
 			return false;
+		} else {
+			$id=intval($id);
 		}
 
 		$user = $this->usersModel->read('firstname, lastname, email', $id);
@@ -124,6 +171,19 @@ class Users extends CI_Controller
 		redirect('users'); // On retourne à la liste des enregistrements
 	}
 
+	 protected function set_users_post_validation($oldMail = NULL) {
+        $this->form_validation->set_rules('firstname', '"Prénom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
+		$this->form_validation->set_rules('lastname', '"Nom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
+
+		if($this->input->post('email') != $oldMail) {
+			$is_unique =  '|is_unique[users.email]';
+		} else {
+			$is_unique =  '';
+		}
+		$this->form_validation->set_rules('email', '"Mail"', 'trim|required|min_length[5]|max_length[124]|xss_clean|valid_email'.$is_unique);
+
+		$this->form_validation->set_rules('phone', '"Téléphone"', 'trim|min_length[5]|max_length[20]|encode_php_tags|xss_clean');
+    }
 
 	//	Cette page accepte une variable $_GET facultative
 	public function test($message = '')

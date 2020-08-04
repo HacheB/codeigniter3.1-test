@@ -1,10 +1,23 @@
-<h1 class="h2"><?php echo $titreDefaut; ?></h1>
+<?php
+	function formatDate ($date) {
+		$d = new DateTime($date);
+		return $d->format('Y/m/d H:i');
+	}
+?>
+<div class="row mb-2">
+	<div class="col">
+		<h1 class="h2"><?php echo $titreDefaut; ?></h1>
+	</div>
+	<div class="col-auto">
+		<a href="users/create" class="btn btn-info btn-lg">Ajouter utilisateur</a>
+	</div>
+</div>
 
 <?php if($this->session->tempdata()): ?>
 	<?php foreach ($this->session->tempdata() as $key => $tempdata): ?>
 		<div class="alert alert-info" role="alert">
 		 	<?php
-		 		echo $key . $tempdata;
+		 		echo $tempdata;
 		 		$this->session->unset_tempdata($key);
 		 		// echo $this->session->tempdata('users_new');
 		 		// $this->session->unset_tempdata('users_new');
@@ -22,8 +35,9 @@
 				<th scope="col">Prénom</th>
 				<th scope="col">Nom</th>
 				<th scope="col">Mail</th>
-				<th scope="col">Phone</th>
+				<th scope="col">Téléphone</th>
 				<th scope="col">Edition</th>
+				<th scope="col">Création</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -35,9 +49,11 @@
 				<td class=""><?php echo $user->lastname; ?></td>
 				<td class=""><?php echo $user->email; ?></td>
 				<td class=""><?php echo $user->phone; ?></td>
-				<td class=""><?php echo $user->date_updated; ?></td>
+				<td class=""><?php echo formatDate($user->date_updated); ?></td>
+				<td class=""><?php echo formatDate($user->date_created); ?></td>
 				<td>
-					<a href="users/delete/<?php echo $user->id; ?>" class="btn btn-danger btn-sm usersDeleteConfirm-js">Supprimer</a>
+					<a href="<?php echo site_url('users/update/'. $user->id); ?>" class="btn btn-info btn-sm">Editer</a>
+					<a href="<?php echo site_url('users/delete/'. $user->id); ?>" class="btn btn-danger btn-sm usersDeleteConfirm-js">Supprimer</a>
 				</td>
 			</tr>
 		<?php endforeach; ?>

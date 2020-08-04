@@ -3,7 +3,6 @@ class Users_model extends CI_Model {
 	
 	protected $table = 'users';
 
-
     public function __construct()
     {
         // $this->load->database(); // Déjà chargé en global
@@ -35,7 +34,6 @@ class Users_model extends CI_Model {
 						->insert($this->table);
 
 		// return $this->db->insert($this->table, $value_escaped); // Avec cette methode on ne peut pas prendre le 'NOW()'; 
-		
 	}
 
 	public function read($select = 'id, firstname, lastname, email, phone, date_created, date_updated',
@@ -49,7 +47,7 @@ class Users_model extends CI_Model {
 		{
 			$where = array('id' => $where);
 		}
-		
+
 		return $this->db->select($select)
 						->from($this->table)
 						->where($where)
@@ -80,10 +78,10 @@ class Users_model extends CI_Model {
 	//
 	// Editer un utilisateur
 	//
-	public function update($where, $options_echappees = array(), $options_non_echappees = array())
+	public function update($where, $value_escaped = array(), $value_no_escaped = array())
 	{		
 		//	Vérification des données à mettre à jour
-		if(empty($options_echappees) AND empty($options_non_echappees))
+		if(empty($value_escaped) AND empty($value_no_escaped))
 		{
 			return false;
 		}
@@ -94,8 +92,8 @@ class Users_model extends CI_Model {
 			$where = array('id' => $where);
 		}
 
-		return (bool) $this->db->set($options_echappees)
-			->set($options_non_echappees, null, false)
+		return (bool) $this->db->set($value_escaped)
+			->set($value_no_escaped, null, false)
 			->where($where)
 			->update($this->table);
 
