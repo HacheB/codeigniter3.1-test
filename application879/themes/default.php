@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+	<?php
+		echo meta("X-UA-Compatible", "IE=edge", 'http-equiv');
+		echo meta("viewport", "width=device-width, initial-scale=1");
+	?>
 	<title><?php echo $output['titre']; ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $output['charset']; ?>" />
 	<?php foreach($output['css'] as $url): ?>
-			<link rel="stylesheet" type="text/css" media="screen" href="<?php echo $url; ?>" />
+		<?php
+			$link = array(
+				'href'  => $url,
+				'rel'   => 'stylesheet',
+				// 'type'  => 'text/css', // Attribut non necessaire HTML5
+				'media' => 'screen'
+			);
+			echo link_tag($link);
+		?>
 	<?php endforeach; ?>
-
-	<style type="text/css"></style>
 </head>
 <body>
 

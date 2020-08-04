@@ -10,6 +10,9 @@ class Layout
 		$this->CI = get_instance();
 		$this->var['output'] = '';
 
+		// Helpers natif
+		$this->CI->load->helper('html');
+		// Helpers custom	
 		$this->CI->load->helper('assets');
 
 		//	Le titre est composé du nom de la méthode et du nom du contrôleur
@@ -23,7 +26,7 @@ class Layout
 		$this->var['css'] = array();
 		$this->var['js'] = array();
 
-		$this->add_css('bootstrap.min');
+		$this->add_css('bootstrap.min', '0.0.1');
 	}
 	
 
@@ -67,11 +70,11 @@ class Layout
 		return false;
 	}
 
-	public function add_css($nom)
+	public function add_css($nom, $version = '')
 	{
-		if(is_string($nom) AND !empty($nom) AND file_exists('./assets/css/' . $nom . '.css'))
+		if(is_string($nom) AND !empty($nom) AND file_exists('./assets/css/' . $nom . '.css' ))
 		{
-			$this->var['css'][] = css_url($nom);
+			$this->var['css'][] = css_url($nom, $version);
 			return true;
 		}
 		return false;
