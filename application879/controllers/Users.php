@@ -93,6 +93,37 @@ class Users extends CI_Controller
 
 	}
 
+	//
+	// Supprimer un utilisateur
+	// reçoit l'id en parametre GET
+	//
+	public function delete($id)
+	{
+		$id = intval($id); // force le type INT
+		if(!is_integer($id) || $id <= 0) {
+			$this->session->set_tempdata('users_delete--danger', 'Tentative de suppression erreur', 30);
+			$this->get();
+		 	// redirect('users'); // On retourne à la liste des enregistrements
+			return false;
+		}
+
+		$user = $this->usersModel->read('firstname, lastname, email', $id);
+		// Vérification si le user est dans la base de données
+		if (count($user) <= 0) {
+			$this->session->set_tempdata('users_delete--warning', 'Echec de la suppression, l\'utilisateur est inconnu.', 60);
+		} else {
+			// Suppression du user
+			$r = $this->usersModel->delete($id);
+			if ($r) {
+				$this->session->set_tempdata('users_delete--succes', 'Utilisateur supprimé ('. $user[0]->firstname .', '. $user[0]->lastname .', '. $user[0]->email .')', 60);
+			} else {
+				$this->session->set_tempdata('users_delete--danger', 'Echec suppression de l\'utilisateur ('. $user[0]->firstname .' '. $user[0]->lastname .' '. $user[0]->email .')', 60);
+			}
+		}
+		// $this->get();
+		redirect('users'); // On retourne à la liste des enregistrements
+	}
+
 
 	//	Cette page accepte une variable $_GET facultative
 	public function test($message = '')

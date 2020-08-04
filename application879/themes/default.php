@@ -18,6 +18,15 @@
 			echo link_tag($link);
 		?>
 	<?php endforeach; ?>
+	<style>
+		html {
+		    font-size: 62.5% !important;
+		    font-size: calc(1em * .625) !important;
+		}
+		body {
+		  font-size: 1.4rem;
+		}
+	</style>
 </head>
 <body>
 

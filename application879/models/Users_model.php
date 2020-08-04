@@ -44,6 +44,12 @@ class Users_model extends CI_Model {
 						$debut = null,
 						$order = 'ID DESC')
 	{
+		//	Raccourci dans le cas où on sélectionne l'id
+		if(is_integer($where))
+		{
+			$where = array('id' => $where);
+		}
+		
 		return $this->db->select($select)
 						->from($this->table)
 						->where($where)

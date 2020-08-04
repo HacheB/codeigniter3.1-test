@@ -26,7 +26,7 @@ echo form_open('/users/create',$params);
 		<?php echo form_error('phone', '<small class="form-text text-danger">', '</small>') ?>
 	</div>
 
-	<input type="submit" value="Envoyer" class="btn btn-primary" />
+	<input type="submit" value="Envoyer" class="btn btn-primary btn-lg" />
 <?php
  echo form_close()
 ?>
