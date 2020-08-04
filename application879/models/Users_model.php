@@ -41,11 +41,13 @@ class Users_model extends CI_Model {
 	public function read($select = 'id, firstname, lastname, email, phone, date_created, date_updated',
 						$where = array(),
 						$nb = null,
-						$debut = null)
+						$debut = null,
+						$order = 'ID DESC')
 	{
 		return $this->db->select($select)
 						->from($this->table)
 						->where($where)
+						->order_by($order)
 						->limit($nb, $debut)
 						->get()
 						->result();

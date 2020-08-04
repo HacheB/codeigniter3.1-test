@@ -35,11 +35,9 @@ class Users extends CI_Controller
 		$data = array();
 		$data['titreDefaut'] = $this->titreDefaut;
 		
-		$users = $this->usersModel->read();
-		$data['users'] = $this->titreDefaut;
-
-		// $this->load->view('users_home', $data);
-		$this->layout->view('users_home', $data); // Utilisation du layout custom
+		$data['users'] = $this->usersModel->read();
+		// $this->load->view('users_home', $data); // Chargement de la vue
+		$this->layout->view('users_home', $data); // Chargement de la vue ds le layout custom
 	}
 
 	//
