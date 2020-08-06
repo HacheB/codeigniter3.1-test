@@ -134,6 +134,13 @@ class Users extends CI_Controller
 		 	}
 		}
 		else {
+			// Je ne surcharge pas les erreurs ici car ce n'est pas fiable.
+			// on a pas acces au type de l'erreur mais seulement au champ ou l'erreur est présente.
+			/*var_dump(form_error('email'));
+			echo '<pre>';
+			    var_dump($this->form_validation->error_array());
+			echo '</pre>';*/
+
 			//	Le formulaire est invalide ou vide
 			$this->layout->view('users_update', $data); // Utilisation du layout custom
 		}
@@ -175,13 +182,20 @@ class Users extends CI_Controller
         $this->form_validation->set_rules('firstname', '"Prénom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
 		$this->form_validation->set_rules('lastname', '"Nom"', 'trim|required|min_length[2]|max_length[94]|encode_php_tags|xss_clean');
 
+		// Permet de ne pas vérifier l'email unique si pas de changement de mail (en cas de mise à jour)
 		if($this->input->post('email') != $oldMail) {
 			$is_unique =  '|is_unique[users.email]';
+
+			// Message personalisé si email déjà pris
+			$user = $this->usersModel->read('id, firstname, lastname', array('email' => $this->input->post('email')));
+			if (is_array($user) && count($user) > 0) {
+				$this->form_validation->set_message('is_unique', 'Le mail doit être unique.<br> Il est utilisé par l\'utilisateur id "'.$user[0]->id. '" ('. $user[0]->firstname .' '. $user[0]->lastname .')');
+			}
 		} else {
 			$is_unique =  '';
 		}
 		$this->form_validation->set_rules('email', '"Mail"', 'trim|required|min_length[5]|max_length[124]|xss_clean|valid_email'.$is_unique);
-
+		
 		$this->form_validation->set_rules('phone', '"Téléphone"', 'trim|min_length[5]|max_length[20]|encode_php_tags|xss_clean');
     }
 
