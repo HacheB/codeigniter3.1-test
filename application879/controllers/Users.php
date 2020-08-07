@@ -189,7 +189,7 @@ class Users extends CI_Controller
 			// Message personalisé si email déjà pris
 			$user = $this->usersModel->read('id, firstname, lastname', array('email' => $this->input->post('email')));
 			if (is_array($user) && count($user) > 0) {
-				$this->form_validation->set_message('is_unique', 'Le mail doit être unique.<br> Il est utilisé par l\'utilisateur id "'.$user[0]->id. '" ('. $user[0]->firstname .' '. $user[0]->lastname .')');
+				$this->form_validation->set_message('is_unique', 'Le mail doit être unique.<br> L\'adresse "'. $this->input->post('email') .'" est déjà utilisée par l\'utilisateur id "'.$user[0]->id. '" ('. $user[0]->firstname .' '. $user[0]->lastname .')');
 			}
 		} else {
 			$is_unique =  '';
